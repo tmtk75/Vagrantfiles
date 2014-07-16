@@ -3,8 +3,12 @@ es_host = http://localhost:9200
 datasets_dir = ee-datasets/datasets
 
 usage:
-	echo Hi!
+	@echo Hi!
+	@echo vagrant up, and make import
 
+#
+# elasticsearch datasets
+#
 import: darwin-origin hacker_planet movie_db products products_multi_tagged usernames
 
 darwin-origin: .darwin-origin
@@ -46,4 +50,23 @@ head:
 
 up:
 	vagrant up --provision
+
+#
+# elasticsearch-dsl-py
+#
+.py:
+	virtualenv .py
+
+.env: .py
+	echo "source .py/bin/activate" > .env
+
+es-dsl: elasticsearch-dsl-py/dist/elasticsearch_dsl-0.0.1-py2.7.egg
+
+elasticsearch-dsl-py/dist/elasticsearch_dsl-0.0.1-py2.7.egg: elasticsearch-dsl-py
+	(cd elasticsearch-dsl-py; \
+	git checkout 9b638a3e9ec3d2cf9de058068b861012614d4def; \
+	python setup.py install)
+
+elasticsearch-dsl-py:
+	git clone git@github.com:elasticsearch/elasticsearch-dsl-py.git
 
